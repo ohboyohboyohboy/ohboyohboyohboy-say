@@ -1,0 +1,71 @@
+#!/usr/bin/ruby
+# encoding: utf-8
+#
+# author: Kyle Yetter
+#
+
+lib_dir = File.expand_path( "../../lib", __FILE__ )
+$LOAD_PATH.unshift( lib_dir ) if test( ?d, lib_dir )
+
+require 'optparse'
+require 'ostruct'
+require 'say/import'
+
+$options =
+  OpenStruct.new(
+    :add_newline => true
+  )
+
+OptionParser.new do |o|
+  program = File.basename( $0 )
+
+  o.set_program_name program
+  o.release = Say::VERSION
+
+
+  o.set_banner( <<-END.gsub( /^\s*\| ?/, '' ).chomp )
+  | #{ program }: print a printf-style formatted string with ansi color code markup
+  |
+  | USAGE:
+  |     #{ program } [opts] format_string [args ...]
+  END
+
+  o.separator ""
+  o.separator "OPTIONS:"
+
+  o.on( "-n", "--no-newline", "Do not print a newline after printing the arguments" ) do
+    $options.add_newline = false
+  end
+
+  o.on( "-v", "--version", "Print version number and exit" ) do
+    puts Say::VERSION
+    exit
+  end
+
+  o.on( "-h", "--help", "Print help for this command" ) do
+    puts o
+    puts( <<-END.gsub( /^\s*\| ?/, '' ).chomp )
+    | ANSI MARK UP EXAMPLES:
+    |     styles: <_>underline</_> <~>invert</~> <!>blink</!> <*>bold</*>
+    |     colors: <fg_color></fg_color> <@bg_color></@bg_color> <fg@bg></fg@bg>
+    END
+    exit
+  end
+
+  o.separator ""
+
+  o.parse!
+end
+
+################################################################################
+##################################### Main #####################################
+################################################################################
+
+format = ARGV.shift.to_s.dup
+
+if $options.add_newline
+  say( format, *ARGV )
+else
+  say_print( format, *ARGV )
+end
+

@@ -1,0 +1,8 @@
+bin/say
+lib/say.rb
+lib/say/import.rb
+History.txt
+Gemfile
+Rakefile
+README.txt
+test/test_say.rb
